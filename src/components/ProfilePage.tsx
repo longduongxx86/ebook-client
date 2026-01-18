@@ -5,9 +5,13 @@ import { Camera, Package, ShoppingCart, CreditCard, User, LogOut, Minus, Plus, X
 import type { Order, OrdersResponse, Payment, PaymentsResponse, CartResponse, CartItem, User as UserType, ProfileResponse } from '../types/api';
 import qrImage from '../store/qr/qr.png';
 
-export default function ProfilePage() {
+interface ProfilePageProps {
+    initialTab?: 'info' | 'cart' | 'orders' | 'payments';
+}
+
+export default function ProfilePage({ initialTab = 'info' }: ProfilePageProps) {
     const { user, signOut, token } = useAuth();
-    const [activeTab, setActiveTab] = useState('info');
+    const [activeTab, setActiveTab] = useState(initialTab);
     const [orders, setOrders] = useState<Order[]>([]);
     const [payments, setPayments] = useState<Payment[]>([]);
     const [cartData, setCartData] = useState<CartResponse | null>(null);
@@ -25,6 +29,10 @@ export default function ProfilePage() {
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string | null>(user?.avatar_url || null);
 
+
+    useEffect(() => {
+        setActiveTab(initialTab);
+    }, [initialTab]);
 
     useEffect(() => {
         if (user) {
@@ -262,7 +270,7 @@ export default function ProfilePage() {
                         {tabs.map(tab => (
                             <button
                                 key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
+                                onClick={() => setActiveTab(tab.id as 'info' | 'cart' | 'orders' | 'payments')}
                                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activeTab === tab.id
                                     ? 'bg-amber-50 text-amber-700'
                                     : 'text-gray-600 hover:bg-gray-100'

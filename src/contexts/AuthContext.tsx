@@ -18,7 +18,6 @@ interface AuthContextType {
   loading: boolean;
   signInWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUpWithEmail: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
-  signInWithGoogle: () => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -79,82 +78,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signInWithGoogle = async () => {
-    try {
-      const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
-      if (!clientId) {
-        console.log('Google Sign-In error: missing client id');
-        return { error: new Error('Missing Google Client ID') };
-      }
-      type Google = {
-        accounts: {
-          id: {
-            initialize: (config: { client_id: string; callback: (response: { credential: string }) => void; use_fedcm_for_prompt?: boolean }) => void;
-            prompt: (notification?: (n: {
-              isNotDisplayed: () => boolean;
-              getNotDisplayedReason: () => string;
-              isDismissed: () => boolean;
-              getDismissedReason: () => string;
-              isSkipped: () => boolean;
-              getSkippedReason: () => string;
-            }) => void) => void;
-          };
-        };
-      };
-      const loadScript = () =>
-        new Promise<void>((resolve, reject) => {
-          if (typeof (window as unknown as { google?: Google }).google !== 'undefined') {
-            resolve();
-            return;
-          }
-          const script = document.createElement('script');
-          script.src = 'https://accounts.google.com/gsi/client';
-          script.async = true;
-          script.defer = true;
-          script.onload = () => resolve();
-          script.onerror = () => reject(new Error('Failed to load Google script'));
-          document.head.appendChild(script);
-        });
-      await loadScript();
-      const attemptPrompt = (useFedCM: boolean) =>
-        new Promise<string>((resolve, reject) => {
-          try {
-            (window as unknown as { google: Google }).google.accounts.id.initialize({
-              client_id: clientId,
-              use_fedcm_for_prompt: useFedCM,
-              callback: (response: { credential: string }) => {
-                const token = response.credential;
-                if (token) resolve(token);
-                else reject(new Error('No credential received'));
-              },
-            });
-            (window as unknown as { google: Google }).google.accounts.id.prompt();
-          } catch (e) {
-            reject(e as Error);
-          }
-        });
-      let credential: string;
-      try {
-        credential = await attemptPrompt(true);
-      } catch (err) {
-        console.log('Google FedCM failed, falling back to non-FedCM', err);
-        credential = await attemptPrompt(false);
-      }
-      console.log('Google credential received');
-      const response = await authApi.loginWithGoogle(credential) as { token: string; user: User };
-      const { token: newToken, user: newUser } = response;
-      localStorage.setItem(TOKEN_KEY, newToken);
-      localStorage.setItem(USER_KEY, JSON.stringify(newUser));
-      setToken(newToken);
-      setUser(newUser);
-      console.log('Google Sign-In success');
-      return { error: null };
-    } catch (error) {
-      console.log('Google Sign-In error', error);
-      return { error: error as Error };
-    }
-  };
-
   const signOut = async () => {
     try {
       if (token) {
@@ -178,7 +101,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading,
         signInWithEmail,
         signUpWithEmail,
-        signInWithGoogle,
         signOut,
       }}
     >

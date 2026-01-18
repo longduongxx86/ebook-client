@@ -24,9 +24,9 @@ export const API_ENDPOINTS = {
   cart: {
     list: `${API_BASE_URL}/cart`,
     add: `${API_BASE_URL}/cart/add`,
-    update: (itemId: string) => `${API_BASE_URL}/cart/${itemId}`,
-    remove: (itemId: string) => `${API_BASE_URL}/cart/${itemId}`,
-    clear: `${API_BASE_URL}/cart/clear`,
+    update: (itemId: string) => `${API_BASE_URL}/cart/items/${itemId}`,
+    remove: (itemId: string) => `${API_BASE_URL}/cart/items/${itemId}`,
+    clear: `${API_BASE_URL}/cart`,
   },
 
   // Reviews
@@ -44,7 +44,6 @@ export const API_ENDPOINTS = {
     logout: `${API_BASE_URL}/logout`,
     profile: `${API_BASE_URL}/profile`,
     refresh: `${API_BASE_URL}/refresh`,
-    google: `${API_BASE_URL}/auth/google`,
   },
 
   // Orders
@@ -58,8 +57,8 @@ export const API_ENDPOINTS = {
 
   // Payments
   payments: {
-    list: `${API_BASE_URL}/payments`,
-    create: (orderId: string) => `${API_BASE_URL}/orders/${orderId}/payment`,
+    list: `${API_BASE_URL}/payments/my-payments`,
+    create: (orderId: string) => `${API_BASE_URL}/orders/${orderId}/payments`,
   },
 
   // Upload

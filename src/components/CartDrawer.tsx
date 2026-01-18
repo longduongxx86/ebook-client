@@ -8,9 +8,10 @@ import Toast from './Toast';
 interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  onCheckoutSuccess?: () => void;
 }
 
-export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
+export default function CartDrawer({ isOpen, onClose, onCheckoutSuccess }: CartDrawerProps) {
   const { cartItems, updateQuantity, removeFromCart, loading, refreshCart } = useCart();
   const { user, token } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -37,6 +38,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       await orderApi.createOrderFromCart(shippingAddress, token);
       alert('Đặt hàng thành công!');
       await refreshCart();
+      if (onCheckoutSuccess) {
+        onCheckoutSuccess();
+      }
       onClose();
     } catch (e) {
       console.error(e);

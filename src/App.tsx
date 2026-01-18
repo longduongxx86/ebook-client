@@ -157,6 +157,7 @@ function AppContent() {
   const [toast, setToast] = useState<string | null>(null);
   const [pendingCartAction, setPendingCartAction] = useState<string | null>(null);
   const [view, setView] = useState<'home' | 'profile'>('home');
+  const [profileInitialTab, setProfileInitialTab] = useState<'info' | 'cart' | 'orders' | 'payments'>('info');
   const [ws, setWs] = useState<WebSocket | null>(null);
   const wsUnauthorizedRef = useRef(false);
   const wsConnectingRef = useRef(false);
@@ -362,7 +363,10 @@ function AppContent() {
         }}
         onCartClick={() => setShowCart(true)}
         onCategoryClick={() => { }}
-        onProfileClick={() => setView('profile')}
+        onProfileClick={() => {
+          setProfileInitialTab('info');
+          setView('profile');
+        }}
         onLogoClick={() => setView('home')}
       />
 
@@ -373,10 +377,10 @@ function AppContent() {
           searchQuery={searchQuery}
           onAddToCart={handleAddToCart}
           onViewDetails={setSelectedBookId}
-          onFilterChange={handleFilterChange} // Thêm prop này
+          onFilterChange={handleFilterChange}
         />
       ) : (
-        <ProfilePage />
+        <ProfilePage initialTab={profileInitialTab} />
       )}
 
       <LoginModal
@@ -399,7 +403,14 @@ function AppContent() {
         />
       )}
 
-      <CartDrawer isOpen={showCart} onClose={() => setShowCart(false)} />
+      <CartDrawer
+        isOpen={showCart}
+        onClose={() => setShowCart(false)}
+        onCheckoutSuccess={() => {
+          setProfileInitialTab('orders');
+          setView('profile');
+        }}
+      />
 
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
 

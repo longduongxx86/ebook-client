@@ -145,7 +145,6 @@ export interface BookDetailSeller {
   address: string;
   avatar_url: string;
   role: string;
-  email_verified: boolean;
 }
 
 export interface BookDetailCategory {
@@ -188,7 +187,6 @@ export interface ReviewUser {
   address: string;
   avatar_url: string;
   role: string;
-  email_verified: boolean;
 }
 
 export interface Review {

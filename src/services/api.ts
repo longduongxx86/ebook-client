@@ -150,13 +150,6 @@ export const authApi = {
     });
   },
 
-  async loginWithGoogle(idToken: string) {
-    return fetchAPI(API_ENDPOINTS.auth.google, {
-      method: 'POST',
-      body: JSON.stringify({ id_token: idToken }),
-    });
-  },
-
   async logout(token: string) {
     return fetchAPI(API_ENDPOINTS.auth.logout, {
       method: 'POST',

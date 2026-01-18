@@ -154,7 +154,7 @@ export default function BookCatalog({
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const totalBooks = pagination?.total || books.length;
+  // const totalBooks = pagination?.total || books.length;
   const totalPages = pagination ? Math.ceil(pagination.total / ITEMS_PER_PAGE) : Math.ceil(books.length / ITEMS_PER_PAGE) || 1;
   const visibleBooks = pagination ? books : books.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
@@ -182,11 +182,11 @@ export default function BookCatalog({
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-2xl font-serif font-bold text-gray-900">
-                  Danh sách sách
+                  Trang chính
                 </h2>
-                <p className="text-sm text-gray-600 mt-1">
+                {/* <p className="text-sm text-gray-600 mt-1">
                   {books.length} sách được tìm thấy{pagination ? ` (Tổng: ${totalBooks})` : ''}
-                </p>
+                </p> */}
               </div>
 
               <div className="flex items-center gap-3">
