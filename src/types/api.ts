@@ -16,8 +16,10 @@ export interface Book {
   image_url?: string | null; // Some APIs use image_url instead of cover_url
   excerpt: string | null;
   category: string;
-  rating_avg: number;
-  rating_count: number;
+  rating_avg?: number;
+  rating_count?: number;
+  average_rating?: number;
+  review_count?: number;
   stock: number;
 }
 

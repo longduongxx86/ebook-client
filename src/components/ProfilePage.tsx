@@ -245,6 +245,16 @@ export default function ProfilePage({ initialTab = 'info' }: ProfilePageProps) {
         { id: 'payments', label: 'Lịch sử thanh toán', icon: CreditCard },
     ];
 
+    const getUserInitial = () => {
+        if (!user) return '';
+        const source =
+            (user.full_name && user.full_name.trim()) ||
+            (user.username && user.username.trim()) ||
+            (user.email && user.email.trim()) ||
+            '';
+        return source ? source.charAt(0).toUpperCase() : '';
+    };
+
     if (!user) {
         return <div className="p-8 text-center">Vui lòng đăng nhập để xem hồ sơ.</div>;
     }
@@ -260,10 +270,10 @@ export default function ProfilePage({ initialTab = 'info' }: ProfilePageProps) {
                             {avatarPreview ? (
                                 <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
                             ) : (
-                                <span className="text-2xl font-bold text-amber-600">{user.full_name?.charAt(0) || user.username.charAt(0)}</span>
+                                <span className="text-2xl font-bold text-amber-600">{getUserInitial()}</span>
                             )}
                         </div>
-                        <h2 className="font-bold text-gray-900 truncate">{user.full_name || user.username}</h2>
+                        <h2 className="font-bold text-gray-900 truncate">{user.full_name || user.username || user.email}</h2>
                         <p className="text-sm text-gray-500 truncate">{user.email}</p>
                     </div>
                     <nav className="p-4 space-y-1">

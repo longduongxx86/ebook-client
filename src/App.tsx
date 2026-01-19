@@ -137,8 +137,8 @@ const normalizeBook = (book: ApiBook, categoryMap: Map<string, BookCatalogCatego
     image_url: book.image_url || book.cover_url || null,
     excerpt: book.excerpt,
     category,
-    rating_avg: book.rating_avg,
-    rating_count: book.rating_count,
+    rating_avg: book.rating_avg ?? book.average_rating ?? 0,
+    rating_count: book.rating_count ?? book.review_count ?? 0,
     stock: book.stock,
   };
 };

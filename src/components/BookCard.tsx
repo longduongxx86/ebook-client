@@ -1,4 +1,4 @@
-import { ShoppingCart, Eye } from 'lucide-react';
+import { ShoppingCart, Eye, Star } from 'lucide-react';
 import { useState } from 'react';
 
 interface BookCardProps {
@@ -21,33 +21,24 @@ export default function BookCard({ book, onAddToCart, onViewDetails }: BookCardP
   const [isHovered, setIsHovered] = useState(false);
 
   const renderStars = () => {
-    const fullStars = Math.floor(book.rating_avg);
-    const hasHalfStar = book.rating_avg % 1 >= 0.5;
+    const rawRating = Number.isFinite(book.rating_avg) ? book.rating_avg : 0;
+    const clampedRating = Math.max(0, Math.min(5, rawRating));
+    const roundedRating = Math.round(clampedRating * 10) / 10;
+    const filledStars = Math.round(clampedRating);
 
     return (
       <div className="flex items-center gap-1">
-        {Array.from({ length: 5 }).map((_, i) => {
-          if (i < fullStars) {
-            return (
-              <span key={i} className="text-amber-400">
-                ★
-              </span>
-            );
-          } else if (i === fullStars && hasHalfStar) {
-            return (
-              <span key={i} className="text-amber-400">
-                ★
-              </span>
-            );
-          } else {
-            return (
-              <span key={i} className="text-gray-300">
-                ★
-              </span>
-            );
-          }
-        })}
-        <span className="text-xs text-gray-600 ml-1">({book.rating_count})</span>
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Star
+            key={i}
+            size={16}
+            className={i < filledStars ? 'fill-amber-400 text-amber-400' : 'text-gray-300'}
+          />
+        ))}
+        <span className="text-xs text-gray-600 ml-1">
+          {/* {roundedRating.toFixed(1)} ({book.rating_count}) */}
+          {roundedRating.toFixed(1)}
+        </span>
       </div>
     );
   };
