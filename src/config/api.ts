@@ -65,6 +65,16 @@ export const API_ENDPOINTS = {
   upload: {
     avatar: `${API_BASE_URL}/upload/avatar`,
   },
+
+  // Chat
+  chat: {
+    history: `${API_BASE_URL}/chat/history`,
+    ws: (token: string) => {
+      const url = new URL(API_BASE_URL);
+      const protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+      return `${protocol}//${url.host}/ws?token=${token}`;
+    }
+  },
 };
 
 export function getHeaders(token?: string, isMultipart: boolean = false): Record<string, string> {

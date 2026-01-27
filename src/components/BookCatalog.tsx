@@ -10,7 +10,7 @@ interface Book {
   price: number;
   image_url: string | null;
   excerpt: string | null;
-  category: Category; // Giữ nguyên để hiển thị category của từng book
+  category: Category;
   rating_avg: number;
   rating_count: number;
   stock: number;
@@ -34,7 +34,6 @@ interface ApiResponse {
   };
 }
 
-// Interface riêng cho categories response
 interface CategoriesResponse {
   categories: Category[];
   pagination?: {
@@ -46,7 +45,7 @@ interface CategoriesResponse {
 
 interface BookCatalogProps {
   dataBooks: ApiResponse | Book[];
-  dataCategories?: Category[] | CategoriesResponse; // Thêm dataCategories từ props
+  dataCategories?: Category[] | CategoriesResponse;
   searchQuery: string;
   onAddToCart: (bookId: string) => void;
   onViewDetails: (bookId: string) => void;
@@ -68,7 +67,7 @@ export interface FilterParams {
 
 export default function BookCatalog({
   dataBooks,
-  dataCategories, // Nhận categories từ props
+  dataCategories,
   searchQuery,
   onAddToCart,
   onViewDetails,

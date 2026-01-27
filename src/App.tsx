@@ -12,8 +12,8 @@ import CartDrawer from './components/CartDrawer';
 import Toast from './components/Toast';
 import ProfilePage from './components/ProfilePage';
 import type { Book as ApiBook, Category as ApiCategory, BooksResponse, CategoriesResponse, Pagination } from './types/api';
+import { ChatWidget } from './components/ChatWidget';
 
-// Types matching BookCatalog's expectations
 type SortOption = 'newest' | 'price-asc' | 'price-desc' | 'rating' | 'bestseller';
 
 interface BookCatalogBook {
@@ -98,14 +98,10 @@ const buildQueryString = (params: FilterParams) => {
   return query.toString();
 };
 
-// Helper to normalize Book from API to BookCatalog format
 const normalizeBook = (book: ApiBook, categoryMap: Map<string, BookCatalogCategory>): BookCatalogBook | null => {
-  // Get category - API might return category as string (category name/id) or Category object
   let category: BookCatalogCategory | null = null;
   
   if (typeof book.category === 'string') {
-    // If category is a string, try to find it in categoryMap
-    // For now, create a minimal category object
     category = categoryMap.get(book.category) || {
       id: book.category,
       name: book.category,
@@ -115,7 +111,6 @@ const normalizeBook = (book: ApiBook, categoryMap: Map<string, BookCatalogCatego
       updated_at: Date.now(),
     };
   } else if (book.category && typeof book.category === 'object') {
-    // If category is an object, normalize it
     const cat = book.category as unknown as ApiCategory;
     category = {
       id: String(cat.id),
@@ -177,18 +172,16 @@ function AppContent() {
     fetchCategories().then(() => {
       fetchBooks();
     });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const fetchBooksWithFilters = async () => {
       try {
-        // Gọi API với filters
         const queryString = buildQueryString(filters);
         const response = await bookApi.getBooksWithFilters(queryString, token || undefined) as BooksResponse | { data?: BooksResponse; books?: ApiBook[]; pagination?: Pagination };
         const booksArray = (response as BooksResponse).books || (response as { data?: BooksResponse }).data?.books || (response as { books?: ApiBook[] }).books || [];
         const paginationData = (response as BooksResponse).pagination || (response as { data?: BooksResponse }).data?.pagination || (response as { pagination?: Pagination }).pagination;
         
-        // Create category map for normalization
         const categoryMap = new Map<string, BookCatalogCategory>();
         categories.forEach(cat => categoryMap.set(cat.id, cat));
         
@@ -202,7 +195,6 @@ function AppContent() {
       }
     };
 
-    // Debounce để tránh gọi API quá nhiều
     const timeoutId = setTimeout(() => {
       fetchBooksWithFilters();
     }, 300);
@@ -262,7 +254,6 @@ function AppContent() {
       const booksArray = (response as BooksResponse).books || (response as { data?: BooksResponse }).data?.books || (response as { books?: ApiBook[] }).books || [];
       const paginationData = (response as BooksResponse).pagination || (response as { data?: BooksResponse }).data?.pagination || (response as { pagination?: Pagination }).pagination;
       
-      // Create category map for normalization
       const categoryMap = new Map<string, BookCatalogCategory>();
       categories.forEach(cat => categoryMap.set(cat.id, cat));
       
@@ -280,7 +271,7 @@ function AppContent() {
     try {
       const response = await categoriApi.getCategory() as CategoriesResponse | { data?: CategoriesResponse; categories?: ApiCategory[] };
       const categoriesArray = (response as CategoriesResponse).categories || (response as { data?: CategoriesResponse }).data?.categories || (response as { categories?: ApiCategory[] }).categories || [];
-      // Normalize categories to BookCatalog format
+
       const normalizedCategories: BookCatalogCategory[] = categoriesArray.map(cat => ({
         id: String(cat.id),
         name: cat.name,
@@ -456,6 +447,7 @@ function AppContent() {
           </div>
         </div>
       </footer>
+      <ChatWidget />
     </div>
   );
 }
